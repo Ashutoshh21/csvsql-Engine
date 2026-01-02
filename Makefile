@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -Wall -Iinclude
-SRC = src/main.cpp
+SRC = src/main.cpp src/csv_reader.cpp 
 OUT = build/csvsql
 
 all: $(OUT)
