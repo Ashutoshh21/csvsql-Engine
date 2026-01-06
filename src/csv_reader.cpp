@@ -1,5 +1,6 @@
 #include "csv_reader.h"
 #include<iostream>
+#include<iomanip>
 #include<fstream>
 #include<sstream>
 #include<algorithm>
@@ -29,8 +30,8 @@ bool CSVReader::load(const std::string& filename){
 
     while(std::getline(file,line)){
         auto row = split(line,',');
-        if(!row.empty()) data.push_back(row);
-    }
+        if(!row.empty()) data.push_back(row); //this will make sure no empty str is pushed
+    }                                         //careful that data[i].size() != headers.size() possible
 
     file.close();
     return true;   
@@ -39,21 +40,38 @@ bool CSVReader::load(const std::string& filename){
 void CSVReader::display(int limit) const{
     if(headers.empty()) return;
 
-    for(const auto &col : headers){
-        std::cout<<col<<"  |  ";
-    }
-    std::cout<<std::endl;
+    size_t col = headers.size();
 
-    for(size_t i= 0; i < headers.size(); i++){
-        std::cout<<"------------------";
-    }
-    std::cout<<std::endl;
+    //setting a fixed column width for presentation
+    std::vector<int> maxw(headers.size(), 0);
+
+    for(size_t i = 0; i < col; i++)
+        if(maxw[i] < headers[i].size()) maxw[i] = headers[i].size();
 
     int rows = std::min(limit, (int)data.size());
 
+    for(const auto& row: data){
+        for(size_t j = 0; j < row.size(); j++){
+            if(maxw[j] < row[j].size()){
+                maxw[j] = row[j].size();
+            }
+        }
+    }
+
+    for(size_t i = 0; i < col; i++){
+        std::cout<<std::left<<std::setw(maxw[i]+3)<<headers[i]<<" | ";
+    }
+    std::cout<<std::endl;
+
+    for(size_t i= 0; i < col; i++){
+        std::cout<<std::setfill('-')<<std::setw(maxw[i]+3)<<"";
+    }
+    std::cout<<std::endl;
+    std::cout<<std::setfill(' ');
+
     for(int i = 0; i < rows; i++){
-        for(const auto &cell : data[i]){
-            std::cout<<cell<<"    |   ";
+        for(size_t j = 0; j <data[i].size(); j++){
+            std::cout<<std::left<<std::setw(maxw[j]+3)<<data[i][j]<<" | ";
         }
         std::cout<<std::endl;
     }
