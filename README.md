@@ -35,13 +35,14 @@ csvsql-engine/
 #Build
 - make
 - ./build/csvsql 
-- make clea
+- make clean
 
 #Example Output for now
- id | name | age | country
---------------------------------
- 1 | Ashutosh | 21 | India
- 2 | Rahul | 22 | India
- 3 | David | 24 | USA
+EmployeeID    | Name           | Department    | Experience_Years    | Education_Level    | Age    | Gender    | City         | Monthly_Salary    | 
+-------------------------------------------------------------------------------------------------------------------------
+1             | Employee_1     | Marketing     | 15                  | Master             | 53     | Female    | Delhi        | 111416            | 
+2             | Employee_2     | Operations    | 7                   | Bachelor           | 25     | Female    | Bangalore    | 95271             | 
+3             | Employee_3     | IT            | 12                  | High School        | 51     | Female    | Hyderabad    | 69064             | 
+4             | Employee_4     | Operations    | 8                   | PhD                | 44     | Male      | Delhi        | 95091             |
 
-My next step is to fix this column Size to make it look uniform and formatted
+The column size is made uniform and column names have been mapped to indices.

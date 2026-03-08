@@ -1,9 +1,8 @@
 #include "csv_reader.h"
 #include<iostream>
-#include<iomanip>
 #include<fstream>
 #include<sstream>
-#include<algorithm>
+#include<stdexcept>
 
 std::vector<std::string> CSVReader::split(const std::string& line, char delimiter){
     std::vector<std::string> tokens;
@@ -18,25 +17,36 @@ std::vector<std::string> CSVReader::split(const std::string& line, char delimite
     return tokens;
 }
 
-bool CSVReader::load(const std::string& filename){
-    std::ifstream file("data/employeesalary.csv");
-    if(!file.is_open()) return false;
+CSVReader::CSVReader(const std::string& filename){
+    this->filename = filename;
+}
+
+Table CSVReader::read(){
+    std::ifstream file(filename);
+    if(!file.is_open()) throw std::runtime_error("File not loaded: " + filename);
 
     std::string line;
+    
+    std::vector<std::string> header;
+    std::vector<std::vector<std::string>> rows;
 
     if(std::getline(file, line)){
-        headers = split(line, ',');
+        header = split(line, ',');
     }
+    else throw std::runtime_error("Empty csv file: " + filename);
 
     while(std::getline(file,line)){
         auto row = split(line,',');
-        if(!row.empty()) data.push_back(row); //this will make sure no empty str is pushed
+        if(!row.empty()) rows.push_back(row); //this will make sure no empty str is pushed
     }                                         //careful that data[i].size() != headers.size() possible
 
-    file.close();
-    return true;   
+    Table tab(std::move(header), std::move(rows));
+    file.close(); 
+
+    return tab;
 }
 
+/*
 void CSVReader::display(int limit) const{
     if(headers.empty()) return;
 
@@ -78,10 +88,4 @@ void CSVReader::display(int limit) const{
 
 }
 
-const std::vector<std::string>& CSVReader::getHeader() const{
-    return headers;
-}
-
-const std::vector<std::vector<std::string>>& CSVReader::getData() const{
-    return data;
-}
+*/
