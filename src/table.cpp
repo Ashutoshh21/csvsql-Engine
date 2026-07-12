@@ -1,7 +1,7 @@
 #include "table.h"
 #include<stdexcept>
 
-Table::Table(std::vector<std::string> header,std::vector<std::vector<std::string>> rows) : header(std::move(header)),rows(std::move(rows))
+Table::Table(std::vector<std::string> header_,std::vector<std::vector<std::string>> rows_) : header(std::move(header_)),rows(std::move(rows_))
  //inner header -> constructor parameter 
 {
     BuildColIndex();

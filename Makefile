@@ -1,6 +1,12 @@
 CXX = g++
 CXXFLAGS = -Wall -Iinclude
-SRC = src/main.cpp src/csv_reader.cpp src/table.cpp 
+
+SRC = src/main.cpp \
+      src/csv_reader.cpp \
+      src/table.cpp \
+      src/tokenizer.cpp \
+	  src/quey.cpp
+
 OUT = build/csvsql
 
 .PHONY: all clean
@@ -13,4 +19,3 @@ $(OUT): $(SRC)
 
 clean:
 	rm -rf build
-
