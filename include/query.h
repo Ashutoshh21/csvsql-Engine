@@ -4,7 +4,7 @@
 #include<string>
 #include<vector>
 
-class query{
+class Query{
 
     public:
     void addSelectedColumn(const std::string& col);

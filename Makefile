@@ -5,7 +5,8 @@ SRC = src/main.cpp \
       src/csv_reader.cpp \
       src/table.cpp \
       src/tokenizer.cpp \
-	  src/quey.cpp
+	  src/query.cpp \
+	  src/parser.cpp
 
 OUT = build/csvsql
 

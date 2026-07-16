@@ -1,9 +1,9 @@
 #include"query.h"
 
-void query::addSelectedColumn(const std::string& col){
+void Query::addSelectedColumn(const std::string& col){
     selectedColumns.push_back(col);
 }
 
-const std::vector<std::string>& query::getSelectedColumns() const{
+const std::vector<std::string>& Query::getSelectedColumns() const{
     return selectedColumns;
 }

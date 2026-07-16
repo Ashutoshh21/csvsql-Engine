@@ -1,15 +1,18 @@
-
-#include"tokenizer.h"
+#include"parser.h"
 #include<iostream>
 
 int main() {
-    Tokenizer tok1;
-    std::vector<Token> tokens = tok1.tokenize("select name,age");
+    Parser p;
+    const std::string q = "SELECT NAME, AGE";
+    Tokenizer t;
+    std::vector<Token> tokens = t.tokenize(q);
+    Query Q = p.parse(tokens);
 
-    for(const auto &token : tokens){
-        std::cout<<tokenTypeToString(token.type)<< " : "<<token.lexeme<<std::endl;
+    std::vector<std::string> cols = Q.getSelectedColumns();
+
+    for(auto col : cols){
+        std::cout<<col<<" | ";
     }
-    return 0;
 }
 
 
@@ -53,4 +56,19 @@ try {
 } catch (const std::exception& e) {
     std::cerr << e.what() << std::endl;
 }
+*/
+
+/*
+//testing Tokenizer on Query
+
+#include"tokenizer.h"
+#include "query.h"
+
+Tokenizer tok1;
+    std::vector<Token> tokens = tok1.tokenize("select name,age");
+
+    for(const auto &token : tokens){
+        std::cout<<tokenTypeToString(token.type)<< " : "<<token.lexeme<<std::endl;
+    }
+    return 0;
 */
