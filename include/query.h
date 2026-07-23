@@ -1,17 +1,32 @@
 #ifndef QUERY_H
 #define QUERY_H
 
-#include<string>
-#include<vector>
+#include <string>
+#include <vector>
+#include <optional>
 
-class Query{
+#include "tokenizer.h"
 
-    public:
+class Condition {
+public:
+    std::string column;
+    TokenType op;
+    std::string value;
+};
+
+class Query {
+public:
+    //setters
     void addSelectedColumn(const std::string& col);
-    const std::vector<std::string>& getSelectedColumns() const;
+    void setWhereCondition(const Condition& condition);
 
-    private:
+    //getters
+    const std::vector<std::string>& getSelectedColumns() const;
+    const std::optional<Condition>& getWhereCondition() const;
+
+private:
     std::vector<std::string> selectedColumns;
+    std::optional<Condition> whereCondition;
 };
 
 #endif

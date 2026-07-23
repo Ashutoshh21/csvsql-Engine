@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -Iinclude
+CXXFLAGS = -std=c++17 -Wall -Iinclude
 
 SRC = src/main.cpp \
       src/csv_reader.cpp \

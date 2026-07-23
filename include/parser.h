@@ -16,6 +16,8 @@ class Parser{
     const Token& previous(const std::vector<Token>& tokens) const; //previous to current token
 
     Query parseSelect(const std::vector<Token>& tokens);
+    Condition parseCondition(const std::vector<Token>& tokens);
+    Condition parseWhereClause(const std::vector<Token>& tokens);
 };
 
 #endif

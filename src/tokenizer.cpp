@@ -27,12 +27,46 @@ std::vector<Token> Tokenizer::tokenize(const std::string& query) {
         if (std::isspace(c)) {
             current++;
         }
-
         else if (std::isalpha(c) || c == '_') {
             tokens.push_back(identifier(query));
         }
         else if(c == ','){
             tokens.push_back({TokenType::COMMA, std::string(1,c)});
+            current++;
+        }
+        else if(c == '='){
+            tokens.push_back({TokenType::EQUAL, std::string(1,c)});
+            current++;
+        }
+        else if(c == '!'){
+            if(current + 1 < query.length() && query[current+1] == '='){
+                current++; //move the pointer to it
+                tokens.push_back({TokenType::NOT_EQUAL, "!="});
+            }
+            else tokens.push_back({TokenType::UNKNOWN, "!"});
+            current++;
+        }
+        else if(c == '>'){
+            if(current + 1 < query.length() && query[current+1] == '='){
+                current++;
+                tokens.push_back({TokenType::GREATER_EQUAL, ">="});
+            }
+            else tokens.push_back({TokenType::GREATER, std::string(1,c)});
+            current++;
+        }
+        else if(c == '<'){
+            if(current + 1 < query.length() && query[current+1] == '='){
+                current++;
+                tokens.push_back({TokenType::LESS_EQUAL, "<="});
+            }
+            else tokens.push_back({TokenType::LESS, std::string(1,c)});
+            current++;
+        }
+        else if(std::isdigit(c)){
+            tokens.push_back(number(query));
+        }
+        else if(c == '*'){
+            tokens.push_back({TokenType::STAR, "*"});
             current++;
         }
         else {
@@ -63,6 +97,12 @@ Token Tokenizer::identifier(const std::string& query){
     return {TokenType::IDENTIFIER , lexeme};
 }
 
+Token Tokenizer::number(const std::string& query){
+    size_t start = current;
+    while(current < query.length() && std::isdigit(query[current])) current++;
+    std::string num = query.substr(start, current-start);
+    return {TokenType::NUMBER, num};
+}
 //For pretty printing my TokenType : lexeme While testing my lexer.
 std::string tokenTypeToString(TokenType type) {
     switch (type) {
