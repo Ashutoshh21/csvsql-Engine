@@ -1,30 +1,59 @@
+
+#include<optional>
 #include"parser.h"
 #include<iostream>
-#include<optional>
+#include<iomanip>
+#include"table.h"
+#include"executor.h"
+#include"csv_reader.h"
 
 int main() {
 
-    std::cout<<"Testing SELECT +  WHERE condition storage inside query class"<<std::endl;
+    std::cout << "csvsql-engine started\n\n";
 
-    Parser p;
-    const std::string q = "SELECT NAME, AGE WHERE AGE > 30";
-    Tokenizer t;
-    std::vector<Token> tokens = t.tokenize(q);
+    try {
+        std::string filename;
+        std::cout << "Enter the file name of the CSV to be fetched: "
+                        "(for eg: employeesalary.csv) ";
+        std::cin >> filename;
 
-    Query Q = p.parse(tokens);
+        CSVReader reader("data/" + filename);
+        Table mainTable = reader.read();
+        
+        std::string query;
+        std::cout<<"Enter The SQL Query you want to execute: "<<std::endl;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //consume the extra line from above cin>> first
+        std::getline(std::cin, query);
+        
+        Tokenizer tok;
 
-    std::vector<std::string> cols = Q.getSelectedColumns();
+        std::vector<Token> tokens = tok.tokenize(query);
 
-    auto c = Q.getWhereCondition();
+        Parser p;
+        auto q = p.parse(tokens);
 
-    for(auto col : cols){
-        std::cout<<col<<" | ";
+        Executor exec;
+        Table projectedTable = exec.execute(mainTable, q);
+        const auto& header = projectedTable.getheader();
+        const auto& rows = projectedTable.getrows();
+
+        for (size_t j = 0; j < projectedTable.col_count(); j++) {
+            std::cout << std::setw(20) << header[j];
+        }
+        std::cout << std::endl;
+
+        for (size_t i = 0; i < projectedTable.rows_count(); i++) {
+            for (size_t j = 0; j < projectedTable.col_count(); j++) {
+                std::cout << std::setw(20) << rows[i][j];
+            }
+            std::cout << std::endl;
+        }
+
+        std::cout<<"Prog execution successful"<<std::endl;
+
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
     }
-    std::cout<<"\n";
-
-    std::cout<<c->column<<" ";
-    std::cout<<tokenTypeToString(c->op)<< " ";
-    std::cout<<c->value<<" ";
 
     return 0;
     

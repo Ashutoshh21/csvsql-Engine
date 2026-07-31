@@ -84,7 +84,7 @@ Condition Parser::parseCondition(const std::vector<Token> &tokens){
         match(tokens, TokenType::STRING)
     )
     {
-        condition.value = previous(tokens).lexeme;
+        condition.value = previous(tokens);
     }
     else
     {

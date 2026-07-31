@@ -11,7 +11,7 @@ class Condition {
 public:
     std::string column;
     TokenType op;
-    std::string value;
+    Token value;
 };
 
 class Query {

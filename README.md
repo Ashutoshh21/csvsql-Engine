@@ -1,5 +1,11 @@
 # CSVSQL Engine (C++)
 
+![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)
+![Build](https://img.shields.io/badge/build-Makefile-brightgreen)
+![Parser](https://img.shields.io/badge/Parser-Recursive%20Descent-blueviolet)
+![Status](https://img.shields.io/badge/status-Active%20Development-orange)
+
+
 A lightweight SQL-like query engine built from scratch in **C++17** using only the Standard Template Library (STL). The project explores how relational database engines work internally by implementing SQL parsing and query execution over CSV files without relying on external database libraries.
 
 ---
@@ -19,59 +25,70 @@ A lightweight SQL-like query engine built from scratch in **C++17** using only t
 ### SQL Tokenizer (Lexer)
 - Hand-written character-by-character tokenizer.
 - Supports:
-  - SQL keywords (`SELECT`)
+  - SQL keywords (`SELECT`, `WHERE`)
   - Identifiers
+  - Numeric literals
+  - Comparison operators (`=`, `!=`, `<`, `>`, `<=`, `>=`)
   - Commas
   - End-of-input token
 - Case-insensitive SQL keyword recognition.
 
 ### Recursive Descent Parser
 - Parses SQL tokens into an internal `Query` representation.
-- Currently supports:
-
-```sql
-SELECT column1
-SELECT column1, column2
-SELECT EmployeeID, Department, Monthly_Salary
-```
+- Supports:
+  - Column projection
+  - `WHERE` clause parsing
+  - Numeric and string comparison conditions
 
 ### Query Execution
-- Executes `SELECT` projection queries on CSV data.
-- Returns a new `Table` containing only the requested columns.
-- Throws descriptive errors for invalid column names.
+- Executes SQL-like queries directly on CSV data.
+- Supports:
+  - `SELECT column1, column2`
+  - `WHERE` filtering
+- Returns a new `Table` containing only the requested rows and columns.
+- Throws descriptive errors for invalid column names and malformed queries.
 
 ---
 
-## Example
+## Supported SQL Syntax
 
-### Sample Execution
+Examples of currently supported queries:
 
-![Sample SELECT Query Execution](assets/SampleSelect.png)
+```sql
+SELECT Name
 
-### Input
+SELECT Name, Age
 
-```text
-employeesalary.csv
+SELECT EmployeeID, Department, Monthly_Salary
 
-SELECT EmployeeID, Department, Name, Monthly_Salary
+SELECT Name, Age
+WHERE Age > 30
+
+SELECT Name, Department
+WHERE Department = Marketing
 ```
 
-### Output
+---
 
-```text
-EmployeeID    Department    Name          Monthly_Salary
---------------------------------------------------------
-1             Marketing     Employee_1    111416
-2             Operations    Employee_2     95271
-3             IT            Employee_3     69064
-...
-```
+## Sample Execution
+
+### SELECT Projection
+
+![Sample SELECT Query](assets/SampleSelect.png)
+
+### SELECT with Numeric WHERE Condition
+
+![Sample SELECT WHERE Numeric](assets/SampleSelectWhereNum.png)
+
+### SELECT with String WHERE Condition
+
+![Sample SELECT WHERE String](assets/SampleSelectWhereString.png)
 
 ---
 
 ## Project Architecture
 
-```
+```text
                 SQL Query
                      │
                      ▼
@@ -86,20 +103,66 @@ EmployeeID    Department    Name          Monthly_Salary
                      ▼
                   Query
                      │
-                     ▼
- CSVReader ──► Table ──► Executor
+                     │
+CSVReader ──► Table ──┼────► Executor
                      │
                      ▼
                Result Table
 ```
 
-Each component has a single responsibility:
+### Components
 
-- **CSVReader** – Reads CSV files.
-- **Table** – Stores structured tabular data.
-- **Tokenizer** – Converts SQL text into tokens.
-- **Parser** – Converts tokens into a query representation.
-- **Executor** – Executes queries on tables.
+- **CSVReader** – Reads CSV files into memory.
+- **Table** – Stores structured tabular data with indexed column lookup.
+- **Tokenizer** – Converts SQL text into lexical tokens.
+- **Parser** – Converts tokens into a `Query` object.
+- **Executor** – Evaluates `SELECT` and `WHERE` queries on a table.
+
+---
+
+## Internal Architecture
+
+### Tokenizer
+
+```
+Tokenizer
+│
+├── tokenize()
+├── identifier()
+└── number()
+```
+
+### Parser
+
+```
+Parser
+│
+├── parse()
+├── parseSelect()
+├── parseCondition()
+├── match()
+├── check()
+└── previous()
+```
+
+### Query
+
+```
+Query
+│
+├── selectedColumns
+└── optional<Condition>
+```
+
+### Executor
+
+```
+Executor
+│
+├── execute()
+├── evaluateCondition()
+└── compare()
+```
 
 ---
 
@@ -108,6 +171,7 @@ Each component has a single responsibility:
 ```text
 csvsql-engine/
 ├── include/
+│   ├── condition.h
 │   ├── csv_reader.h
 │   ├── executor.h
 │   ├── parser.h
@@ -116,6 +180,7 @@ csvsql-engine/
 │   └── tokenizer.h
 │
 ├── src/
+│   ├── condition.cpp
 │   ├── csv_reader.cpp
 │   ├── executor.cpp
 │   ├── parser.cpp
@@ -125,6 +190,7 @@ csvsql-engine/
 │   └── main.cpp
 │
 ├── data/
+├── assets/
 ├── build/
 ├── Makefile
 └── README.md
@@ -133,6 +199,8 @@ csvsql-engine/
 ---
 
 ## Build
+
+Compile:
 
 ```bash
 make
@@ -168,12 +236,10 @@ make clean
 - ✅ Column Indexing
 - ✅ SQL Tokenizer (Lexer)
 - ✅ Recursive Descent Parser
-- ✅ SELECT Projection Execution
-- ⏳ WHERE clause
-- ⏳ Comparison operators (`=`, `!=`, `<`, `>`, `<=`, `>=`)
+- ✅ SELECT Projection
+- ✅ WHERE Clause
 - ⏳ ORDER BY
 - ⏳ LIMIT
-- ⏳ Aggregate functions (`COUNT`, `SUM`, `AVG`)
 
 ---
 
@@ -186,7 +252,7 @@ This project is being developed to gain hands-on experience with:
 - Recursive descent parsing
 - Query execution
 - In-memory tabular data structures
-- Modern C++ design and STL
+- Modern C++ design using the STL
 
 ---
 
